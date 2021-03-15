@@ -1,5 +1,6 @@
-package com.bonejah.ytsapi.controllers;
+package com.bonejah.ytsapi.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,9 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import com.bonejah.ytsapi.models.Movie;
-import com.bonejah.ytsapi.models.YTSApi;
-import com.bonejah.ytsapi.services.MovieService;
+import com.bonejah.ytsapi.model.Movie;
+import com.bonejah.ytsapi.service.MovieService;
 import com.bonejah.ytsapi.utils.YTSUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -57,29 +57,32 @@ public class YTSController {
 		return ResponseEntity.ok("YTS API online ;)");
 	}
 
-	@GetMapping(path = "/count-movie")
-	public ResponseEntity<YTSApi> getCountMovie() throws JsonMappingException, JsonProcessingException {
+	@GetMapping(path = "/admin/count-movie")
+	public ResponseEntity<String> countMovie() throws IOException {
 		ResponseEntity<String> responseEntity = new RestTemplate().getForEntity(YTSUtils.URL_YTS, String.class);
 		log.info("ResponseEntity" + responseEntity);
 		log.info("ResponseEntity" + responseEntity.getBody());
 
-		String movie_count = new ObjectMapper().readTree(responseEntity.getBody()).path("data").findPath("movie_count")
-				.toPrettyString();
+		String movie_count = new ObjectMapper()
+									.readTree(responseEntity.getBody())
+									.path("data")
+									.findPath("movie_count")
+									.toPrettyString();
 		
-		YTSApi ytsApi = new YTSApi();
-		ytsApi.setMovieCount(Integer.valueOf(movie_count));
-		
-		return ResponseEntity.ok(ytsApi);
+		return ResponseEntity.ok(movie_count);
 	}
 	
-	@GetMapping(path = "load-torrents/{pageLimit}/page-limit")
+	@GetMapping(path = "/admin/load-torrents/{pageLimit}/page-limit")
 	public ResponseEntity<String> loadTorrents(@PathVariable Integer pageLimit) throws JsonMappingException, JsonProcessingException {
 		
 		while(pageLimit > 0) {
 			String url = String.format(YTSUtils.URL_YTS + "?page=%d", pageLimit);
 			ResponseEntity<String> responseEntity = new RestTemplate().getForEntity(url, String.class);
 			
-			JsonNode movies = new ObjectMapper().readTree(responseEntity.getBody()).path("data").findPath("movies");
+			JsonNode movies = new ObjectMapper()
+									.readTree(responseEntity.getBody())
+									.path("data")
+									.findPath("movies");
 			
 			for (JsonNode movieNode : movies) {
 				Movie movie = new ObjectMapper().readValue(movieNode.toString(), Movie.class);

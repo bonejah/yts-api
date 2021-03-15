@@ -1,4 +1,4 @@
-package com.bonejah.ytsapi.services;
+package com.bonejah.ytsapi.service;
 
 import java.util.List;
 
@@ -8,9 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.bonejah.ytsapi.exceptions.BadRequestException;
-import com.bonejah.ytsapi.models.Movie;
-import com.bonejah.ytsapi.repositories.MovieRepository;
+import com.bonejah.ytsapi.exception.BadRequestException;
+import com.bonejah.ytsapi.model.Movie;
+import com.bonejah.ytsapi.repository.MovieRepository;
 
 import lombok.RequiredArgsConstructor;
 

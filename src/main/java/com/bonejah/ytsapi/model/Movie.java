@@ -1,4 +1,4 @@
-package com.bonejah.ytsapi.models;
+package com.bonejah.ytsapi.model;
 
 import java.io.Serializable;
 import java.util.List;
